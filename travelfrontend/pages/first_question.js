@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import ID from './question/[id]'
 
 export const first_question = (props) => {
   return (
@@ -112,7 +113,7 @@ export const first_question = (props) => {
               </div>
             </div>
           </div>
-          <button class="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Button</button>
+          <Link href={`/question/${item.id}`}><button class="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Button</button></Link>
         </div>
 
         )
@@ -157,7 +158,7 @@ export const first_question = (props) => {
 }
 
 export async function getServerSideProps(context) {
-  let a = await fetch("http://localhost:1337/api/questions?populate=*")
+  let a = await fetch("http://localhost:1337/api/questions?filters[slug]=1")
   let first_question = await a.json()
   console.log(first_question)
   return {
