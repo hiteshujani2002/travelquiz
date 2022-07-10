@@ -1,9 +1,12 @@
 import React from 'react'
 import { useRouter , useState } from 'next/router'
 
+
+
 const getQuestion = (questions, index) => {
-  return questions,index;
+  return questions[index];
 };
+
 export async function getStaticProps({params}) {
   const quiz = await getById(params.id);
   return {
@@ -27,9 +30,9 @@ export const Id = ({quiz}) => {
     const router = useRouter()
     const {id} = router.query
     const [index, setIndex] = React.useState(0);
-    const question = getQuestion(quiz.questions, index);
+    const question = getQuestion(quiz.data, index);
     const hasNext = () => {
-      return index < quiz.questions.length - 1;
+      return index < quiz.data.length - 1;
     };
     const nextQuestion = () => {
       if (!hasNext()) {
@@ -40,87 +43,98 @@ export const Id = ({quiz}) => {
     };
   return (
     <div>
-      <section className="text-gray-600 body-font">
+                <section className="text-gray-600 body-font">              
+  
   <div className="container px-5 py-24 mx-auto">
-    <div className="text-center mb-20">
-      <h1 className="sm:text-3xl text-2xl font-medium text-center title-font text-gray-900 mb-4">{}</h1>
-      <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">Blue bottle crucifix vinyl post-ironic four dollar toast vegan taxidermy. Gastropub indxgo juice poutine, ramps microdosing banh mi pug.</p>
-    </div>
-    <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
-      <div className="p-2 sm:w-1/2 w-full">
-        <div className="bg-gray-100 rounded flex p-4 h-full items-center">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-            <path d="M22 4L12 14.01l-3-3"></path>
-          </svg>
-          <span className="title-font font-medium">Authentic Cliche Forage</span>
-        </div>
-      </div>
-      <div className="p-2 sm:w-1/2 w-full">
-        <div className="bg-gray-100 rounded flex p-4 h-full items-center">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-            <path d="M22 4L12 14.01l-3-3"></path>
-          </svg>
-          <span className="title-font font-medium">Kinfolk Chips Snackwave</span>
-        </div>
-      </div>
-      <div className="p-2 sm:w-1/2 w-full">
-        <div className="bg-gray-100 rounded flex p-4 h-full items-center">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-            <path d="M22 4L12 14.01l-3-3"></path>
-          </svg>
-          <span className="title-font font-medium">Coloring Book Ethical</span>
-        </div>
-      </div>
-      <div className="p-2 sm:w-1/2 w-full">
-        <div className="bg-gray-100 rounded flex p-4 h-full items-center">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-            <path d="M22 4L12 14.01l-3-3"></path>
-          </svg>
-          <span className="title-font font-medium">Typewriter Polaroid Cray</span>
-        </div>
-      </div>
-      <div className="p-2 sm:w-1/2 w-full">
-        <div className="bg-gray-100 rounded flex p-4 h-full items-center">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-            <path d="M22 4L12 14.01l-3-3"></path>
-          </svg>
-          <span className="title-font font-medium">Pack Truffaut Blue</span>
-        </div>
-      </div>
-      <div className="p-2 sm:w-1/2 w-full">
-        <div className="bg-gray-100 rounded flex p-4 h-full items-center">
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-            <path d="M22 4L12 14.01l-3-3"></path>
-          </svg>
-          <span className="title-font font-medium">The Catcher In The Rye</span>
-        </div>
-      </div>
-    </div>
-    <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Button</button>
+  <div className="flex justify-center md:h-48 h-30 sm:h-48 sm:mb-2 -mx-2 ">
+  <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 rounded-lg bg-texture_pattern shadow-lg justify-center">
+    <div className="p-2 sm:w-1/2 w-full mb-4 justify-center">
+      <h5 className=" text-white text-center my-8 md:text-5xl  font-semibold mb-5 font-poppins text-4xl">{question.attributes.text}</h5>
+    </div>Name
   </div>
+</div>
+<div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
+
+  
+  {question.attributes.Text.map((id) => (
+
+        <div className="p-2 sm:w-1/2 w-full">
+          <div className="flex  -m-4">
+            <div className="p-4 w-full">
+              <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+                {id.Answer_image.data.map((item) => (
+                  <img className="lg:h-48 md:h-36 w-full object-cover object-center" src={item.attributes.name}alt="blog"></img>
+
+                ))}
+                
+                <div className="p-1">
+                  <div className="bg-gray-100 rounded flex p-4  h-full items-center w-full">
+                    <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" className="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                      <path d="M22 4L12 14.01l-3-3"></path>
+                    </svg>
+                    <span className="title-font font-medium text-2xl">{id.Option_answer}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  ))}
+
+
+    <button onClick={nextQuestion} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Next</button>
+    
+  </div>
+</div>
 </section>
+<footer className="text-gray-600 body-font">
+  <div className="bg-gray-100">
+    <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+      <p className="text-gray-500 text-sm text-center sm:text-left">© 2022 Let's Travel —
+        <a  rel="noopener noreferrer" className="text-gray-600 ml-1" target="_blank">Powered by Strapi</a>
+      </p>
+      <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
+        <a className="text-gray-500">
+          <svg fill="currentColor" strokeLinecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+          </svg>
+        </a>
+        <a classNameName="ml-3 text-gray-500">
+          <svg fill="currentColor" strokeLinecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+          </svg>
+        </a>
+        <a className="ml-3 text-gray-500">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+          </svg>
+        </a>
+        <a className="ml-3 text-gray-500">
+          <svg fill="currentColor" stroke="currentColor" stroke-Linecap="round" stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+            <path stroke="none" d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+            <circle cx="4" cy="4" r="2" stroke="none"></circle>
+          </svg>
+        </a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+      
     </div>
   )
 }
 
 
-// export async function getServerSideProps(context) {
-//   console.log(context.query)
-//   let a = await fetch("http://localhost:1337/api/questions?filters[slug]="+ context.query.slug)
-//   let question = await a.json()
-//   return {
-//     props: {question:question.data[0]}, // will be passed to the page component as props
-//   }
-// }
+
 const QUIZ_URLS = {
-  get: 'http://localhost:1337/api/questions?populate=*',
+  get: 'http://localhost:1337/api/questions?populate=Text.Answer_image',
+
 };
+
+
 export const getAll = async () => {
   const res = await fetch(QUIZ_URLS.get);
   return await res.json();
