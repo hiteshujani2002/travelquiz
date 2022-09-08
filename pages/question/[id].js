@@ -1,11 +1,17 @@
 import React from 'react'
 import { useRouter , useState } from 'next/router'
-
+import Link from 'next/link'
+import {useEffect,useRef} from "react"
+import { addoption, deleteoption } from '../../src/redux/action-creators'
+import { useDispatch, useSelector } from 'react-redux'
+import {store} from '../../src/redux/store'
+// import {reducer} from '../../src/redux/reducers/listReducer'
 
 
 const getQuestion = (questions, index) => {
   return questions[index];
 };
+
 
 export async function getStaticProps({params}) {
   const quiz = await getById(params.id);
@@ -24,13 +30,32 @@ export async function getStaticPaths() {
       fallback: false
   }
 }
+const final_select = [];
+const setsaturn = false;
+const daria = false;
 
 
 export const Id = ({quiz}) => {
     const router = useRouter()
     const {id} = router.query
+    const main = useSelector((state) => state.main)
+    const dispatch = useDispatch()
     const [index, setIndex] = React.useState(0);
     const question = getQuestion(quiz.data, index);
+    const [selection, setSelection] = React.useState([])
+    const [now_select , setNow_select ] = React.useState({})
+    console.log(daria, 1)
+    const hasPrev = () => {
+      return index > 0;
+    };
+  
+    const prevQuestion = () => {
+      window.scrollTo({top: 0});
+      if (index !== 0) {
+          setIndex(index - 1);
+          setsaturn = true;
+      }
+    };
     const hasNext = () => {
       return index < quiz.data.length - 1;
     };
@@ -38,19 +63,61 @@ export const Id = ({quiz}) => {
       if (!hasNext()) {
           finishQuiz();
       } else {
+        console.log(daria, 2)
+        window.scrollTo({top: 0});
+        if (setsaturn === true){
+          var kanan = index
+          dispatch(deleteoption(now_select,kanan))
+          dispatch(addoption(now_select,kanan))
+          setIndex(index+1)
+          setsaturn = false;
+          daria = false;
+
+        }
+        else if(daria == true){
           setIndex(index + 1);
+          dispatch(addoption(now_select,index))
+          daria = false
+        }
+        else{
+          setIndex(index + 1);
+        }
+          // setIndex(index + 1);
+          // dispatch(addoption(now_select))
+          // final_select.splice(index,0,selection)
+          // window.localStorage.setItem('Image_selection',JSON.stringify(final_select))
+          // router.push(`/question/12`, undefined, { shallow: true })
       }
     };
+
+    useEffect ( () => {
+      setSelection(now_select);
+      daria = true;
+    },[now_select]);
+
+  function nextbutton(index){
+    if (index <quiz.data.length -1){
+      <button onClick={() => {nextQuestion() , router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
+    }
+    else{
+      <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Submit</button>
+    }
+  };
+
+    const finishQuiz = () => {
+      // router.push("/question/finish");
+    };
+
   return (
     <div>
-                <section className="text-gray-600 body-font">              
+                <section className="text-gray-600 body-font">    
   
   <div className="container px-5 py-24 mx-auto">
   <div className="flex justify-center md:h-48 h-30 sm:h-48 sm:mb-2 -mx-2 ">
   <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 rounded-lg bg-texture_pattern shadow-lg justify-center">
     <div className="p-2 sm:w-1/2 w-full mb-4 justify-center">
       <h5 className=" text-white text-center my-8 md:text-5xl  font-semibold mb-5 font-poppins text-4xl">{question.attributes.text}</h5>
-    </div>Name
+    </div>
   </div>
 </div>
 <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
@@ -58,14 +125,18 @@ export const Id = ({quiz}) => {
   
   {question.attributes.Text.map((id) => (
 
+
         <div className="p-2 sm:w-1/2 w-full">
           <div className="flex  -m-4">
             <div className="p-4 w-full">
-              <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-                {id.Answer_image.data.map((item) => (
-                  <img className="lg:h-48 md:h-36 w-full object-cover object-center" src={item.attributes.name}alt="blog"></img>
 
-                ))}
+              <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+              <button onClick={() => setNow_select(id)} className=" hover:bg-slate-200 w-full focus:outline-none focus:ring">
+
+
+                  <img className="lg:h-48 md:h-36 w-full object-cover object-center" src={`http://localhost:1337${id.Answer_image.data.attributes.url}`}alt="blog"></img>
+
+
                 
                 <div className="p-1">
                   <div className="bg-gray-100 rounded flex p-4  h-full items-center w-full">
@@ -76,18 +147,28 @@ export const Id = ({quiz}) => {
                     <span className="title-font font-medium text-2xl">{id.Option_answer}</span>
                   </div>
                 </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
-  ))}
-
-
-    <button onClick={nextQuestion} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Next</button>
     
+
+
+  ))}
+  <div className='mt-56 flex flex-row'>
+    <div>
+    <button onClick={() =>{prevQuestion(), router.push(`/question/${Number(id) - 1}`)}} className="flex  mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Previous</button>
+    </div>
+    <div className='space-x-4'>
+    <button onClick={() => {nextQuestion(), router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
+    </div>
+  </div>
+
   </div>
 </div>
 </section>
+
 <footer className="text-gray-600 body-font">
   <div className="bg-gray-100">
     <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
@@ -130,7 +211,7 @@ export const Id = ({quiz}) => {
 
 
 const QUIZ_URLS = {
-  get: 'http://localhost:1337/api/questions?populate=Text.Answer_image',
+  get: 'http://localhost:1337/api/questions?populate[0]=Text.Answer_image.data',
 
 };
 
