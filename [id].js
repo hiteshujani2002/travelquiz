@@ -1,11 +1,16 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/jsx-key */
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react/no-unknown-property */
 import React from 'react'
 import { useRouter , useState } from 'next/router'
 import Link from 'next/link'
 import {useEffect,useRef} from "react"
 import { addoption, deleteoption } from '../../src/redux/action-creators'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import {store} from '../../src/redux/store'
 
-
+// import {reducer} from '../../src/redux/reducers/listReducer'
 
 
 const getQuestion = (questions, index) => {
@@ -31,50 +36,107 @@ export async function getStaticPaths() {
   }
 }
 const final_select = [];
+const setsaturn = false;
+const daria = false;
+
 
 export const Id = ({quiz}) => {
     const router = useRouter()
     const {id} = router.query
+    const main = useSelector((state) => state.main)
+    const dispatch = useDispatch()
     const [index, setIndex] = React.useState(0);
     const question = getQuestion(quiz.data, index);
     const [selection, setSelection] = React.useState([])
     const [now_select , setNow_select ] = React.useState({})
-    // const count = useRef(null)
+    
+    console.log(daria, 1)
     const hasPrev = () => {
       return index > 0;
     };
+  
     const prevQuestion = () => {
+      window.scrollTo({top: 0});
       if (index !== 0) {
           setIndex(index - 1);
+          setsaturn = true;
+    
+          
       }
+   
     };
     const hasNext = () => {
-      return index < quiz.data.length - 1;
+      return index  <= quiz.data.length - 1 ;
     };
+   
+
     const nextQuestion = () => {
       if (!hasNext()) {
           finishQuiz();
       } else {
+        console.log(daria, 2)
+        window.scrollTo({top: 0});
+        if (setsaturn === true){
+          var kanan = index
+          dispatch(deleteoption(now_select,kanan))
+          dispatch(addoption(now_select,kanan))
+          setIndex(index+1)
+          setsaturn = false;
+          daria = false;
+
+        }
+        else if(daria == true){
           setIndex(index + 1);
-          final_select.splice(index,0,selection)
-          const count = useSelector((state) => state.reducer)
-          console.log(count , 'count')
-          addoption(now_select)
-          window.localStorage.setItem('Image_selection',JSON.stringify(final_select))
-          console.log(final_select);
+          dispatch(addoption(now_select,index))
+          daria = false
+        }
+        else{
+          setIndex(index + 1);
+        }
+          // setIndex(index + 1);
+          // dispatch(addoption(now_select))
+          // final_select.splice(index,0,selection)
+          // window.localStorage.setItem('Image_selection',JSON.stringify(final_select))
           // router.push(`/question/12`, undefined, { shallow: true })
       }
     };
 
+    function nextbutton(index){
+      if (index <quiz.data.length -1){
+        console.log("Hi there");
+        <div className='mt-56 flex flex-row'>
+          <div>
+            <button onClick={() => {nextQuestion() , router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
+          </div>
+
+        </div>
+      if(index=quiz.data.length){
+         <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Submit</button>
+      }
+      }
+      else{
+        console.log("Hey people");
+        // <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Submit</button>
+
+      }
+    };
+    
+
+
     useEffect ( () => {
       setSelection(now_select);
+      daria = true;
     },[now_select]);
 
 
 
+  useEffect( () => {
+    nextbutton(index);
+  });
+
     const finishQuiz = () => {
-      // router.push("/question/finish");
-    };
+      
+      <Link href="/finish.js"></Link>    };
 
   return (
     <div>
@@ -120,22 +182,34 @@ export const Id = ({quiz}) => {
             </div>
           </div>
         </div>
+    
+
 
   ))}
+{/* bg-indigo-500 border-0 bg-indigo-500 border-0  */}
+
   <div className='mt-56 flex flex-row'>
     <div>
-    <button onClick={() => {prevQuestion()}} className="flex  mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Previous</button>
+    <button id="prev" disabled={index < 1}   onClick={() =>{prevQuestion(), router.push(`/question/${Number(id) - 1}`)} } className=" flex  mx-auto mt-16 text-white py-2 px-8 focus:outline-nonerounded-full text-lg ">{index  ===  0? "" : "Previous"}</button>
+    
     </div>
+
     <div className='space-x-4'>
-    <button onClick={() => {nextQuestion()}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
+    <button id="next" onClick={() => {nextQuestion(),  router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">{index + 1 === quiz.data.length ? "Submit" : "Next"}</button>
     </div>
-  
   </div>
-    
-    
+  
+ 
+
+
+ 
+
+
   </div>
 </div>
 </section>
+
+
 
 <footer className="text-gray-600 body-font">
   <div className="bg-gray-100">
