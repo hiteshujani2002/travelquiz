@@ -4,12 +4,13 @@
 /* eslint-disable react/no-unknown-property */
 import React from 'react'
 import { useRouter , useState } from 'next/router'
+import  Router  from "next/router";
 import Link from 'next/link'
 import {useEffect,useRef} from "react"
 import { addoption, deleteoption } from '../../src/redux/action-creators'
 import { useDispatch, useSelector } from 'react-redux'
 import {store} from '../../src/redux/store'
-import finish from '../finish'
+import {finish} from '../finish'
 // import {reducer} from '../../src/redux/reducers/listReducer'
 
 
@@ -50,11 +51,13 @@ export const Id = ({quiz}) => {
     const [selection, setSelection] = React.useState([])
     const [now_select , setNow_select ] = React.useState({})
     console.log(daria, 1)
+    // location.reload() 
     const hasPrev = () => {
       return index > 0;
     };
   
     const prevQuestion = () => {
+      router.push(`/question/${Number(id) - 1}`)
       window.scrollTo({top: 0});
       if (index !== 0) {
           setIndex(index - 1);
@@ -67,7 +70,9 @@ export const Id = ({quiz}) => {
     const nextQuestion = () => {
       if (!hasNext()) {
           finishQuiz();
-      } else {
+      }
+      else {
+        router.push(`/question/${Number(id) + 1}`)
         console.log(daria, 2)
         window.scrollTo({top: 0});
         if (setsaturn === true){
@@ -123,7 +128,7 @@ export const Id = ({quiz}) => {
   });
 
     const finishQuiz = () => {
-      router.push("../../api/finish.js");
+      router.push('../finish');
     };
 
   return (
@@ -176,10 +181,12 @@ export const Id = ({quiz}) => {
   ))}
   <div className='mt-56 flex flex-row'>
     <div>
-    <button onClick={() =>{prevQuestion(), router.push(`/question/${Number(id) - 1}`)}} className="flex  mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Previous</button>
+    <button id="prev" disabled={index < 1}   onClick={() =>{prevQuestion()} } className=" flex  mx-auto mt-16 text-white py-2 px-8 focus:outline-nonerounded-full text-lg ">{index  ===  0? "" : "Previous"}</button>
+
+    {/* <button onClick={() =>{prevQuestion(), router.push(`/question/${Number(id) - 1}`)}} className="flex  mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Previous</button> */}
     </div>
     <div className='space-x-4'>
-    <button onClick={() => {nextQuestion(), router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
+    <button onClick={() => {nextQuestion()}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">{index + 1 === quiz.data.length ? "Submit" : "Next"}</button>
     </div>
   </div>
 
@@ -245,3 +252,4 @@ export const getById = async (id) => {
 };
 
 export default Id
+
