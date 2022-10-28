@@ -4,59 +4,46 @@ import { Button } from '../components/Button'
 import { NavBar } from '../components/NavBar'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
-import { first_question } from './first_question'
+import Slug from './question/[slug]'
+// import { first_question } from './first_question'
 
 
-export default function Home() {
+
+export const question = (props) => {
   return (
-    <div className='container text-center'>
-      <section class="text-gray-600 body-font">
-  <div class="container px-4 py-20 mx-auto">
-    <div class="flex flex-col text-center w-full mb-20">
-      <h1 class="sm:text-7xl text-2xl font-medium title-font mb-4 text-white">Travel Quiz</h1>
-      <p class="lg:w-2/3 mx-auto leading-relaxed text-base text-3xl text-slate-50">Let's find a perfect place for you.</p>
-    </div>
-
-  </div>
-  <div className='flex md:ml-25'>
-  <div class="ml-0.5 mt-0.5 mb-5 max-w-sm rounded overflow-hidden shadow-lg bg-white">
-    <img class="w-full" src="https://www.travelmanagers.com.au/wp-content/uploads/2012/08/AdobeStock_254529936_Railroad-to-Denali-National-Park-Alaska_750x500.jpg" alt="Sunset in the mountains"></img>
-    <div class="px-6 py-4">
-      <div class="font-bold text-xl mb-2">Places meant for you</div>
-      <p class="text-gray-700 text-base">
-        Play this Quiz and reveal a perfect place for yourself.
-      </p>
-      <Link href="./first_question"><button class="text-white bg-rose-400 border-0 py-2 px-8 focus:outline-none hover:bg-fuchsia-500 rounded text-lg">Let's Start</button></Link>
-    </div>
-    <div class="px-6 pt-4 pb-2">
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
-    </div>
-  </div>
-  </div>
-
-
-
-  
-
-  {/* <div class="container px-20 py-24 mx-auto flex flex-wrap items-center">
+    <div>
+      {props.questions.data.map((item) => {
+        return (
+          <div className='container text-center'>
+          <section class="text-gray-600 body-font">
+      <div class="container px-4 py-20 mx-auto">
+        <div class="flex flex-col text-center w-full mb-20">
+          <h1 class="sm:text-7xl text-2xl font-medium title-font mb-4 text-white">Travel Quiz</h1>
+          <p class="lg:w-2/3 mx-auto leading-relaxed text-base text-3xl text-slate-50">Let's find a perfect place for you.</p>
+        </div>
     
-  <div class="lg:w-2/6  md:w-1/2  bg-blue-700 rounded-lg p-8 flex flex-col md:ml-9 w-full  md:mt-0">
-  <h2 class="text-white text-2xl font-medium title-font mb-5">Travel Destination Quiz</h2>
-  <div class="relative mb-3">
-  <label for="full-name" class="leading-7 text-sm text-white">A quiz about interesting question on travel personality</label>
-  </div>
-  <button class="text-white bg-rose-400 border-0 py-2 px-8 focus:outline-none hover:bg-fuchsia-500 rounded text-lg">Let's Start</button>
-  <p class="text-xs text-white mt-3">Literally you probably haven't heard of them jean shorts.</p>
-  </div>
-  </div> */}
-
-</section>
-
-
-
-<footer class="text-gray-600 body-font">
+      </div>
+      <div className='flex md:ml-25'>
+      <div class="ml-0.5 mt-0.5 mb-5 max-w-sm rounded overflow-hidden shadow-lg bg-white">
+        <img class="w-full" src="https://www.travelmanagers.com.au/wp-content/uploads/2012/08/AdobeStock_254529936_Railroad-to-Denali-National-Park-Alaska_750x500.jpg" alt="Sunset in the mountains"></img>
+        <div class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">Places meant for you</div>
+          <p class="text-gray-700 text-base">
+            Play this Quiz and reveal a perfect place for yourself.
+          </p>
+          <Link href={`/question/${item.attributes.slug}`}><button class="text-white bg-rose-400 border-0 py-2 px-8 focus:outline-none hover:bg-fuchsia-500 rounded text-lg">Let's Start</button></Link> 
+        </div>
+        <div class="px-6 pt-4 pb-2">
+          <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
+          <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
+          <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
+        </div>
+      </div>
+      </div>
+    
+    
+    </section>
+    <footer class="text-gray-600 body-font">
   <div class="bg-gray-100">
     <div class="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
       <p class="text-gray-500 text-sm text-center sm:text-left">© 2022 Let's Travel —
@@ -91,9 +78,25 @@ export default function Home() {
 </footer>
 
 
+</div>
+        )
+      }
 
-    </div>
-    
+    )}
+  </div>
 
   )
 }
+
+
+
+
+export async function getServerSideProps(context) {
+  let a = await fetch("http://localhost:1337/api/questions/1?filters[slug]=0")
+  let question = await a.json()
+  console.log(question ,"Hi daddy")
+  return {
+    props: {questions:question}, // will be passed to the page component as props
+  }
+}
+export default question;
