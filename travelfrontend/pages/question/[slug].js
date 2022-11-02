@@ -1,7 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react/jsx-key */
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unknown-property */
 import React from 'react'
 import { useRouter , useState } from 'next/router'
 import  Router  from "next/router";
@@ -20,7 +16,7 @@ const getQuestion = (questions, index) => {
 
 
 export async function getStaticProps({params}) {
-  const quiz = await getById(params.id); // First checkpoint of id => slug
+  const quiz = await getBySlug(params.slug); // First checkpoint of id => slug
   return {
       props: {
           quiz,
@@ -41,27 +37,25 @@ const setsaturn = false;
 const daria = false;
 
 
-export const Slug = ({quiz}) => {  // Converted Id => Slug
+const Slug = ({quiz}) => {  // Converted Id => Slug
     const router = useRouter()
-    const {slug} = router.query    // id => slug
     const main = useSelector((state) => state.main)
     const dispatch = useDispatch()
     const [index, setIndex] = React.useState(0);
     const question = getQuestion(quiz.data, index);
     const [selection, setSelection] = React.useState([])
     const [now_select , setNow_select ] = React.useState({})
-    console.log(daria, 1)
-    // location.reload() 
+
     const hasPrev = () => {
       return index > 0;
     };
   
     const prevQuestion = () => {
-      router.push(`/question/${Number(slug) - 1}`) 
-      window.scrollTo({top: 0});
       if (index !== 0) {
           setIndex(index - 1);
           setsaturn = true;
+          // router.push(`/question/${slug_prev}`);
+          window.scrollTo({top: 0});
       }
     };
     const hasNext = () => {
@@ -73,8 +67,6 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
       }
       else {
         setNow_select({})
-        router.push(`/question/${Number(slug) + 1}`) 
-        console.log(daria, 2)
         window.scrollTo({top: 0});
         if (setsaturn === true){
           var kanan = index
@@ -93,6 +85,8 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
         else{
           setIndex(index + 1);
         }
+        const val = index
+        // router.push(`/question/${slug_next}`) 
           // setIndex(index + 1);
           // dispatch(addoption(now_select))
           // final_select.splice(index,0,selection)
@@ -101,35 +95,38 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
       }
     };
 
-    function nextbutton(index){
-      if (index <quiz.data.length -1){
-        <div className='mt-56 flex flex-row'>
-          <div>
-            <button onClick={() => {nextQuestion() , router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
-          </div>
-        </div>
-      }
-      else{
-        <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Submit</button>
+    // function nextbutton(index){
+    //   if (index <quiz.data.length -1){
+    //     <div className='mt-56 flex flex-row'>
+    //       <div>
+    //         <button onClick={() => {nextQuestion() , router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
+    //       </div>
+    //     </div>
+    //   }
+    //   else{
+    //     <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Submit</button>
 
-      }
-    };
+    //   }
+    // };
 
     useEffect ( () => {
       setSelection(now_select);
       daria = true;
     },[now_select]);
 
-  console.log(now_select,"Hi i am buddy")
+  // console.log(now_select,"Hi i am buddy")
 
-  useEffect( () => {
-    nextbutton(index);
-  });
+  // useEffect( () => {
+  //   nextbutton(index);
+  // });
 
     const finishQuiz = () => {
       var position = index
       dispatch(addoption(now_select,position))
-      router.push('../finish');
+      console.log(main,"Final Answer")
+      // router.push('../finish');
+
+      alert(`Great its done.`);
     };
 
   return (
@@ -140,7 +137,7 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
   <div className="flex justify-center md:h-48 h-30 sm:h-48 sm:mb-2 -mx-2 ">
   <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 rounded-lg bg-texture_pattern shadow-lg justify-center">
     <div className="p-2 sm:w-1/2 w-full mb-4 justify-center">
-      <h5 className=" text-white text-center my-8 md:text-5xl  font-semibold mb-5 font-poppins text-4xl">{question.attributes.text}</h5>
+      <h5 className=" text-white text-center my-8 md:text-5xl  font-semibold mb-5 font-poppins text-4xl">{question.attributes.text},{question.attributes.slug}</h5>
     </div>
   </div>
 </div>
@@ -148,8 +145,6 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
 
   
   {question.attributes.Text.map((id) => (
-
-
         <div className={`p-2 sm:w-1/2 w-full ${now_select.id ? now_select.id === id.id ? 'opacity-100' : 'opacity-25': 'opacity-100'}`}>
           <div className="flex  -m-4">
             <div className="p-4 w-full">
@@ -181,14 +176,14 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
 
   ))}
   <div className='mt-56 flex flex-row'>
-    <div>
-    <button id="prev" disabled={index < 1}   onClick={() =>{prevQuestion()} } className=" flex  mx-auto mt-16 text-white py-2 px-8 focus:outline-nonerounded-full text-lg ">{index  ===  0? "" : "Previous"}</button>
+          <div>
+          <button id="prev" disabled={index < 1}   onClick={() =>{prevQuestion()} } className=" flex  mx-auto mt-16 text-white py-2 px-8 focus:outline-nonerounded-full text-lg ">{index  ===  0? "" : "Previous"}</button>
+          </div>
 
-    {/* <button onClick={() =>{prevQuestion(), router.push(`/question/${Number(id) - 1}`)}} className="flex  mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Previous</button> */}
-    </div>
-    <div className='space-x-4'>
-    <button onClick={() => {nextQuestion()}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">{index + 1 === quiz.data.length ? "Submit" : "Next"}</button>
-    </div>
+
+          <div className='space-x-4'>
+          <button onClick={() => {nextQuestion()}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">{index + 1 === quiz.data.length ? "Submit" : "Next"}</button>
+          </div>
   </div>
 
   </div>
@@ -237,7 +232,7 @@ export const Slug = ({quiz}) => {  // Converted Id => Slug
 
 
 const QUIZ_URLS = {
-  get: 'http://localhost:1337/api/questions/1?sort=slug%3Aasc&populate=Text.Answer_image.data.attributes',
+  get: 'http://localhost:1337/api/questions?populate=Text.Answer_image.data.attributes',
 
 };
 
@@ -247,10 +242,10 @@ export const getAll = async () => {
   return await res.json();
 };
 
-export const getById = async (id) => {                          // Fifth checkpoint id => slug
-  const res = await fetch(`${QUIZ_URLS.get}/${id}`); // Sixth checkpoint id => slug
+export const getBySlug = async (slug) => {                          // Fifth checkpoint id => slug
+  const res = await fetch(`${QUIZ_URLS.get}/${slug}`); // Sixth checkpoint id => slug
   return await res.json();
 };
 
-export default Slug    // Seventh checkpoint Id => Slug
+export default Slug ;  // Seventh checkpoint Id => Slug
 
