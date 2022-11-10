@@ -32,25 +32,28 @@ export async function getStaticPaths() {
       fallback: false
   }
 }
-const final_select = [];
-const setsaturn = false;
-const daria = false;
 
+const setsaturn = false;
+const delete_flag = false;
+const option_flag = false;
+export const all_selected_options_list = []
+const all_list = []
 
 const Slug = ({quiz}) => {  // Converted Id => Slug
     const router = useRouter()
     const main = useSelector((state) => state.main)
     const dispatch = useDispatch()
     const [index, setIndex] = React.useState(0);
+    const [option, setOption] = React.useState(0);
     const question = getQuestion(quiz.data, index);
-    const [selection, setSelection] = React.useState([])
-    const [now_select , setNow_select ] = React.useState({})
-
+    const [selection, setSelection] = React.useState([]);
+    const [now_select , setNow_select ] = React.useState({});
     const hasPrev = () => {
       return index > 0;
     };
   
-    const prevQuestion = () => {
+    const prevQuestion = () => { 
+
       if (index !== 0) {
           setIndex(index - 1);
           setsaturn = true;
@@ -62,69 +65,84 @@ const Slug = ({quiz}) => {  // Converted Id => Slug
       return index < quiz.data.length - 1;
     };
     const nextQuestion = () => {
+      // var items = Object.values(selection).map((value) => { return [value, selection[value]] });
+      // var values = items.map((e) => { return e[0] });
+      // console.log(values[0]);
+      // if (selection !== null){
+      //   all_list[index] = values[0]
+      // }    
       if (!hasNext()) {
           finishQuiz();
       }
       else {
-        setNow_select({})
         window.scrollTo({top: 0});
+        setSelection([])
         if (setsaturn === true){
-          var kanan = index
-          dispatch(deleteoption(now_select,kanan))
-          dispatch(addoption(now_select,kanan))
+          var indexposition = index
+          dispatch(deleteoption(now_select,indexposition))
+          dispatch(addoption(now_select,indexposition))
+          // var items = Object.values(selection).map((value) => { return [value, selection[value]] });
+          // var values = items.map((e) => { return e[0] });
+          // all_list[index] = values[0]
+          // console.log(all_list,"all_list")
           setIndex(index+1)
           setsaturn = false;
-          daria = false;
+          delete_flag = false;
 
         }
-        else if(daria == true){
+        else if(delete_flag == true){
           setIndex(index + 1);
           dispatch(addoption(now_select,index))
-          daria = false
+          // var items = Object.values(selection).map((value) => { return [value, selection[value]] });
+          // var values = items.map((e) => { return e[0] });
+          // console.log(all_list,"all_list")
+          // all_list[index] = values[0]
+          delete_flag = false
+
         }
         else{
           setIndex(index + 1);
+
         }
-        const val = index
-        // router.push(`/question/${slug_next}`) 
-          // setIndex(index + 1);
-          // dispatch(addoption(now_select))
-          // final_select.splice(index,0,selection)
-          // window.localStorage.setItem('Image_selection',JSON.stringify(final_select))
-          // router.push(`/question/12`, undefined, { shallow: true })
+        
+
+        // console.log(main,"Main")
+
       }
     };
 
-    // function nextbutton(index){
-    //   if (index <quiz.data.length -1){
-    //     <div className='mt-56 flex flex-row'>
-    //       <div>
-    //         <button onClick={() => {nextQuestion() , router.push(`/question/${Number(id) + 1}`)}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Next</button>
-    //       </div>
-    //     </div>
-    //   }
-    //   else{
-    //     <button className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">Submit</button>
-
-    //   }
-    // };
 
     useEffect ( () => {
       setSelection(now_select);
-      daria = true;
+      var items = Object.values(now_select).map((value) => { return [value, now_select[value]] });
+      var values = items.map((e) => { return e[0] });
+      all_list[index] = values[0]
+      delete_flag = true;
     },[now_select]);
+    
+    useEffect ( () => {
+      console.log(all_list)
+      if (all_list[index] != null){
+        setOption(all_list[index])
+        console.log(all_list[index],"all_list[index]")
+        console.log(option,index,"option, index")
+        option_flag = false;
+      }
+      else{
+        option_flag = true;
+        // console.log("0")
+      }
 
-  // console.log(now_select,"Hi i am buddy")
+    })
 
-  // useEffect( () => {
-  //   nextbutton(index);
-  // });
 
     const finishQuiz = () => {
       var position = index
       dispatch(addoption(now_select,position))
       console.log(main,"Final Answer")
-      // router.push('../finish');
+      all_selected_options_list.push(main.map((options)=>(options.Option_answer)))
+      console.log(all_selected_options_list)
+      router.push('../finish');
 
       alert(`Great its done.`);
     };
@@ -145,7 +163,7 @@ const Slug = ({quiz}) => {  // Converted Id => Slug
 
   
   {question.attributes.Text.map((id) => (
-        <div className={`p-2 sm:w-1/2 w-full ${now_select.id ? now_select.id === id.id ? 'opacity-100' : 'opacity-25': 'opacity-100'}`}>
+        <div className={`p-2 sm:w-1/2 w-full ${all_list[index] ? all_list[index] === id.id ? 'opacity-100' : 'opacity-50': 'opacity-100'}`}>
           <div className="flex  -m-4">
             <div className="p-4 w-full">
 
@@ -182,7 +200,7 @@ const Slug = ({quiz}) => {  // Converted Id => Slug
 
 
           <div className='space-x-4'>
-          <button onClick={() => {nextQuestion()}} className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">{index + 1 === quiz.data.length ? "Submit" : "Next"}</button>
+          <button onClick={() => {if(all_list[index] != null){nextQuestion()} else{alert(`Please select an Option.`)}}}className="flex mx-auto mt-16 text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-lg">{index + 1 === quiz.data.length ? "Submit" : "Next"}</button>
           </div>
   </div>
 
@@ -232,7 +250,7 @@ const Slug = ({quiz}) => {  // Converted Id => Slug
 
 
 const QUIZ_URLS = {
-  get: 'http://localhost:1337/api/questions?populate=Text.Answer_image.data.attributes',
+  get: 'http://localhost:1337/api/questions?sort=slug%3Aasc&populate=Text.Answer_image.data.attributes',
 
 };
 
@@ -247,5 +265,4 @@ export const getBySlug = async (slug) => {                          // Fifth che
   return await res.json();
 };
 
-export default Slug ;  // Seventh checkpoint Id => Slug
-
+export default Slug ;
